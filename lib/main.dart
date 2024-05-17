@@ -71,13 +71,13 @@ class _SplashScreenState extends State<SplashScreen> {
                   )
               ),
 
-              Expanded(
-                  child: Center(child: Text('@michael_zakaria', style: myFontWhite.copyWith(fontSize: 18),))
-              ),
+              // Expanded(
+              //     child: Center(child: Text('@michael_zakaria', style: myFontWhite.copyWith(fontSize: 18),))
+              // ),
 
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Home(game: 'easy')));
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
@@ -85,12 +85,47 @@ class _SplashScreenState extends State<SplashScreen> {
                     padding: const EdgeInsets.all(30),
                     color: Colors.white,
                     child: Center(
-                      child: Text('Play Game', style: myFontBlack,),
-
+                      child: Text('Easy', style: myFontBlack,),
                     ),
                   ),
                 ),
-              )
+              ),
+
+              const SizedBox(height: 10),
+
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Home(game: 'hard')));
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.all(30),
+                    color: Colors.white,
+                    child: Center(
+                      child: Text('Hard', style: myFontBlack,),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const Home(game: '2p')));
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.all(30),
+                    color: Colors.white,
+                    child: Center(
+                      child: Text('2P', style: myFontBlack,),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

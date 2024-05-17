@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({super.key, required this.game});
+
+  final String game;
 
   @override
   State<Home> createState() => _HomeState();
@@ -301,7 +303,8 @@ class _HomeState extends State<Home> {
   void _nextTurn() {
     if(newAiTurn) {
       newAiTurn = !newAiTurn;
-      _hardAiTurn();
+      if(widget.game == 'easy') _aiTurn();
+      if(widget.game == 'hard')  _hardAiTurn();
     }
   }
 
