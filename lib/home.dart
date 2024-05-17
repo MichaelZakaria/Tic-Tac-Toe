@@ -244,8 +244,6 @@ class _HomeState extends State<Home> {
 
     oTurn = !oTurn;
     _checkWinner();
-
-    print(emptySpaces[randomSpace]);
   }
 
   void _nextTurn() {
