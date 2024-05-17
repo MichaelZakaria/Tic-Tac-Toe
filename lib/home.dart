@@ -165,6 +165,58 @@ class _HomeState extends State<Home> {
 
   }
 
+  String? _hardAiCheckWinner() {
+    // check first row
+    if (displayXO[0] == displayXO[1] && displayXO[0] == displayXO[2] && displayXO[0] != "") {
+      return displayXO[0];
+    }
+
+    // check second row
+    else if (displayXO[3] == displayXO[4] && displayXO[3] == displayXO[5] && displayXO[3] != "") {
+      return displayXO[3];
+    }
+
+    // check third row
+    else if (displayXO[6] == displayXO[7] && displayXO[6] == displayXO[8] && displayXO[6] != "") {
+      return displayXO[6];
+    }
+
+    // check first column
+    else if (displayXO[0] == displayXO[3] && displayXO[0] == displayXO[6] && displayXO[0] != "") {
+      return displayXO[0];
+    }
+
+    // check second column
+    else if (displayXO[1] == displayXO[4] && displayXO[1] == displayXO[7] && displayXO[1] != "") {
+      return displayXO[1];
+    }
+
+    // check third column
+    else if (displayXO[2] == displayXO[5] && displayXO[2] == displayXO[8] && displayXO[2] != "") {
+      return displayXO[2];
+    }
+
+    // check left to right diagonal
+    else if (displayXO[0] == displayXO[4] && displayXO[0] == displayXO[8] && displayXO[0] != "") {
+      return displayXO[0];
+    }
+
+    // check right to left diagonal
+    else if (displayXO[2] == displayXO[4] && displayXO[2] == displayXO[6] && displayXO[2] != "") {
+      return displayXO[2];
+    }
+
+    // check for a draw
+    else if(filledSpaces == 9) {
+      return 'tie';
+    }
+
+    else {
+      return null;
+    }
+
+  }
+
   void _showWhoWon(String winner) {
     showDialog(
         barrierDismissible: false,
@@ -249,8 +301,136 @@ class _HomeState extends State<Home> {
   void _nextTurn() {
     if(newAiTurn) {
       newAiTurn = !newAiTurn;
-      _aiTurn();
+      _hardAiTurn();
     }
+  }
+
+  Map<String, int> xScores = {
+    'x': 1,
+    'o': -1,
+    'tie': 0
+  };
+
+  Map<String, int> oScores = {
+    'x': -1,
+    'o': 1,
+    'tie': 0
+  };
+
+  int _minMax(List<String> board, int depth, bool isMaximizing) {
+    String? result = _hardAiCheckWinner();
+    if (result != null) {
+
+      if(oTurn) {
+        return oScores[result]!;
+      } else {
+        return xScores[result]!;
+      }
+
+
+    }
+
+
+
+    if(isMaximizing) {
+
+      int bestScore = -1000;
+
+      for (int i = 0; i < displayXO.length; i++) {
+        if (displayXO[i] == "") {
+
+         if (oTurn) {
+            displayXO[i] = 'o';
+            filledSpaces += 1;
+          } else if (!oTurn) {
+            displayXO[i] = 'x';
+            filledSpaces += 1;
+          }
+
+
+          int score = _minMax(displayXO, depth + 1, false);
+
+          displayXO[i] = '';
+          filledSpaces -= 1;
+
+          bestScore = max(score, bestScore);
+        }
+      }
+      return bestScore;
+
+    } else {
+
+      int bestScore = 1000;
+
+      for (int i = 0; i < displayXO.length; i++) {
+        if (displayXO[i] == "") {
+
+          if (!oTurn) {
+            displayXO[i] = 'o';
+            filledSpaces += 1;
+          } else if (oTurn) {
+            displayXO[i] = 'x';
+            filledSpaces += 1;
+          }
+
+
+          int score = _minMax(displayXO, depth + 1, true);
+
+          displayXO[i] = '';
+          filledSpaces -= 1;
+
+          bestScore = min(score, bestScore);
+        }
+      }
+      return bestScore;
+
+    }
+  }
+
+  void _hardAiTurn() {
+
+    int bestScore = -1000;
+    int? bestMove;
+
+    for (int i = 0; i < displayXO.length; i++) {
+      if (displayXO[i] == "") {
+        if (oTurn) {
+          displayXO[i] = 'o';
+          filledSpaces += 1;
+        } else if (!oTurn) {
+          displayXO[i] = 'x';
+          filledSpaces += 1;
+        }
+
+          int score = _minMax(displayXO, 0, false);
+
+          displayXO[i] = '';
+          filledSpaces -= 1;
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = i;
+          }
+      }
+    }
+
+    if(bestMove != null) {
+      if(oTurn) {
+        setState(() {
+          displayXO[bestMove!] = 'o';
+          filledSpaces += 1;
+        });
+      } else if(!oTurn) {
+        setState(() {
+          displayXO[bestMove!] = 'x';
+          filledSpaces += 1;
+        });
+      }
+    }
+
+
+    oTurn = !oTurn;
+    _checkWinner();
   }
 
 }
