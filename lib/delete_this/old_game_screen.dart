@@ -1,18 +1,19 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:tic_tac_toe/common/fonts/my_fonts.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key, required this.game});
+class OldGameScreen extends StatefulWidget {
+  const OldGameScreen({super.key, required this.game});
 
   final String game;
 
   @override
-  State<Home> createState() => _HomeState();
+  State<OldGameScreen> createState() => _OldGameScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _OldGameScreenState extends State<OldGameScreen> {
 
+  /// Variables
   List<String> displayXO = ["","","","","","","","",""];
 
   bool oTurn = false;
@@ -24,13 +25,6 @@ class _HomeState extends State<Home> {
 
   bool newAiTurn = false;
 
-  static var myFontBlack = GoogleFonts.pressStart2p(
-      textStyle: const TextStyle(color: Colors.white, letterSpacing: 2, fontSize: 15)
-  );
-  static var myFontWhite = GoogleFonts.pressStart2p(
-      textStyle: const TextStyle(color: Colors.white, letterSpacing: 2, fontSize: 15)
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +33,8 @@ class _HomeState extends State<Home> {
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Column(
           children: [
+
+            /// Score
             Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,24 +42,25 @@ class _HomeState extends State<Home> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Player O', style: myFontWhite),
+                        Text('Player O', style: MyFonts.myFontWhite),
                         const SizedBox(height: 8),
-                        Text(oScore.toString(), style: myFontWhite),
+                        Text(oScore.toString(), style: MyFonts.myFontWhite),
                       ],
                     ),
 
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Player X', style: myFontWhite),
+                        Text('Player X', style: MyFonts.myFontWhite),
                         const SizedBox(height: 8),
-                        Text(xScore.toString(), style: myFontWhite),
+                        Text(xScore.toString(), style: MyFonts.myFontWhite),
                       ],
                     )
                   ],
                 )
             ),
 
+            /// Board
             Expanded(
               flex: 3,
               child: GridView.builder(
@@ -83,9 +80,10 @@ class _HomeState extends State<Home> {
               ),
             ),
 
+            /// Title
             Expanded(
                 child: Center(
-                  child: Text('Tic-Tac-Toe', style: myFontWhite,),
+                  child: Text('Tic-Tac-Toe', style: MyFonts.myFontWhite),
                 )
             ),
           ],
@@ -94,6 +92,7 @@ class _HomeState extends State<Home> {
     );
   }
 
+  /// Methods
   void _onTap(int index) {
     if(oTurn && displayXO[index] == "") {
       setState(() {
@@ -277,7 +276,7 @@ class _HomeState extends State<Home> {
 
   void _aiTurn() {
     List<int> emptySpaces = [];
-    for (int i = 0; i < displayXO.length; i++) {
+    for (int i = 0; i < 9; i++) {
       if(displayXO[i] == "") {
         emptySpaces.add(i);
       }
@@ -304,7 +303,14 @@ class _HomeState extends State<Home> {
     if(newAiTurn) {
       newAiTurn = !newAiTurn;
       if(widget.game == 'easy') _aiTurn();
-      if(widget.game == 'hard')  _hardAiTurn();
+      if(widget.game == 'hard') {
+        if (filledSpaces <= 1) {
+          _aiTurn();
+        } else {
+          _hardAiTurn();
+        }
+      }
+
     }
   }
 
@@ -325,21 +331,18 @@ class _HomeState extends State<Home> {
     if (result != null) {
 
       if(oTurn) {
-        return oScores[result]!;
+        return oScores[result]! * ((9 - filledSpaces) + 1);
       } else {
-        return xScores[result]!;
+        return xScores[result]! * ((9 - filledSpaces) + 1);
       }
 
-
     }
-
-
 
     if(isMaximizing) {
 
       int bestScore = -1000;
 
-      for (int i = 0; i < displayXO.length; i++) {
+      for (int i = 0; i < 9; i++) {
         if (displayXO[i] == "") {
 
          if (oTurn) {
@@ -350,8 +353,7 @@ class _HomeState extends State<Home> {
             filledSpaces += 1;
           }
 
-
-          int score = _minMax(displayXO, depth + 1, false);
+         int score = _minMax(displayXO, depth + 1, false);
 
           displayXO[i] = '';
           filledSpaces -= 1;
@@ -365,7 +367,7 @@ class _HomeState extends State<Home> {
 
       int bestScore = 1000;
 
-      for (int i = 0; i < displayXO.length; i++) {
+      for (int i = 0; i < 9; i++) {
         if (displayXO[i] == "") {
 
           if (!oTurn) {
@@ -375,7 +377,6 @@ class _HomeState extends State<Home> {
             displayXO[i] = 'x';
             filledSpaces += 1;
           }
-
 
           int score = _minMax(displayXO, depth + 1, true);
 
@@ -395,7 +396,7 @@ class _HomeState extends State<Home> {
     int bestScore = -1000;
     int? bestMove;
 
-    for (int i = 0; i < displayXO.length; i++) {
+    for (int i = 0; i < 9; i++) {
       if (displayXO[i] == "") {
         if (oTurn) {
           displayXO[i] = 'o';
