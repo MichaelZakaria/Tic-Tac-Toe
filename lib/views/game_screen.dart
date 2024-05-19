@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tic_tac_toe/controllers/game_controller.dart';
+import '../common/board/my_board.dart';
 import '../common/fonts/my_fonts.dart';
+import '../common/score_board/my_score_board.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key, required this.game});
@@ -19,50 +21,10 @@ class GameScreen extends StatelessWidget {
         child: Column(
           children: [
             /// Score
-            Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Player O', style: MyFonts.myFontWhite),
-                        const SizedBox(height: 8),
-                        Obx(() => Text(controller.oScore.toString(), style: MyFonts.myFontWhite)),
-                      ],
-                    ),
-
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Player X', style: MyFonts.myFontWhite),
-                        const SizedBox(height: 8),
-                        Obx(() => Text(controller.xScore.toString(), style: MyFonts.myFontWhite)),
-                      ],
-                    )
-                  ],
-                )
-            ),
+            const MyScoreBoard(),
 
             /// Board
-           Expanded(
-                flex: 3,
-                child: GridView.builder(
-                    itemCount: 9,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-                    itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
-                        onTap: () { controller.onTap(index); },
-                        child: Container(
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey[700]!)),
-                          child: Center(
-                            child: Obx(() => Text(controller.displayXO[index], style: const TextStyle(color: Colors.white, fontSize: 30))),
-                          ),
-                        ),
-                      );
-                    }
-                ),
-              ),
+           const MyBoard(),
 
             /// Title
             Expanded(
@@ -78,3 +40,5 @@ class GameScreen extends StatelessWidget {
 
 
 }
+
+

@@ -351,12 +351,12 @@ class GameController extends GetxController {
     if(bestMove != null) {
       if(oTurn) {
 
-          displayXO[bestMove!] = 'o';
+          displayXO[bestMove] = 'o';
           filledSpaces += 1;
 
       } else if(!oTurn) {
 
-          displayXO[bestMove!] = 'x';
+          displayXO[bestMove] = 'x';
           filledSpaces += 1;
 
       }
