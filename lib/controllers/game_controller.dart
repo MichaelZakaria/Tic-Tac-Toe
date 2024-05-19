@@ -12,7 +12,7 @@ class GameController extends GetxController {
 
   RxList<String> displayXO = <String>["","","","","","","","",""].obs;
 
-  bool oTurn = false;
+  RxBool oTurn = false.obs;
 
   RxInt oScore = 0.obs;
   RxInt xScore = 0.obs;
@@ -21,17 +21,16 @@ class GameController extends GetxController {
 
   bool newAiTurn = false;
 
-
   /// Methods
   void onTap(int index) {
-    if(oTurn && displayXO[index] == "") {
+    if(oTurn.value && displayXO[index] == "") {
 
         displayXO[index] = 'o';
         filledSpaces += 1;
 
         newAiTurn = true;
 
-    } else if(!oTurn && displayXO[index] == "") {
+    } else if(!oTurn.value && displayXO[index] == "") {
 
         displayXO[index] = 'x';
         filledSpaces += 1;
@@ -40,7 +39,7 @@ class GameController extends GetxController {
 
     }
 
-    oTurn = !oTurn;
+    oTurn.value = !oTurn.value;
     _checkWinner();
   }
 
@@ -205,28 +204,33 @@ class GameController extends GetxController {
   }
 
   void _aiTurn() {
-    List<int> emptySpaces = [];
-    for (int i = 0; i < 9; i++) {
-      if(displayXO[i] == "") {
-        emptySpaces.add(i);
-      }
-    }
-    int randomSpace = Random().nextInt(emptySpaces.length);
 
-    if(oTurn) {
+    Future.delayed(const Duration(seconds: 1), () {
+      List<int> emptySpaces = [];
+      for (int i = 0; i < 9; i++) {
+        if(displayXO[i] == "") {
+          emptySpaces.add(i);
+        }
+      }
+      int randomSpace = Random().nextInt(emptySpaces.length);
+
+      if(oTurn.value) {
 
         displayXO[emptySpaces[randomSpace]] = 'o';
         filledSpaces += 1;
 
-    } else if(!oTurn) {
+      } else if(!oTurn.value) {
 
         displayXO[emptySpaces[randomSpace]] = 'x';
         filledSpaces += 1;
 
-    }
+      }
 
-    oTurn = !oTurn;
-    _checkWinner();
+      oTurn.value = !oTurn.value;
+      _checkWinner();
+
+    });
+
   }
 
   void _nextTurn() {
@@ -260,7 +264,7 @@ class GameController extends GetxController {
     String? result = _hardAiCheckWinner();
     if (result != null) {
 
-      if(oTurn) {
+      if(oTurn.value) {
         return oScores[result]! * ((9 - filledSpaces) + 1);
       } else {
         return xScores[result]! * ((9 - filledSpaces) + 1);
@@ -275,10 +279,10 @@ class GameController extends GetxController {
       for (int i = 0; i < 9; i++) {
         if (displayXO[i] == "") {
 
-          if (oTurn) {
+          if (oTurn.value) {
             displayXO[i] = 'o';
             filledSpaces += 1;
-          } else if (!oTurn) {
+          } else if (!oTurn.value) {
             displayXO[i] = 'x';
             filledSpaces += 1;
           }
@@ -300,10 +304,10 @@ class GameController extends GetxController {
       for (int i = 0; i < 9; i++) {
         if (displayXO[i] == "") {
 
-          if (!oTurn) {
+          if (!oTurn.value) {
             displayXO[i] = 'o';
             filledSpaces += 1;
-          } else if (oTurn) {
+          } else if (oTurn.value) {
             displayXO[i] = 'x';
             filledSpaces += 1;
           }
@@ -323,47 +327,51 @@ class GameController extends GetxController {
 
   void _hardAiTurn() {
 
-    int bestScore = -1000;
-    int? bestMove;
+    Future.delayed(const Duration(seconds: 1), () {
 
-    for (int i = 0; i < 9; i++) {
-      if (displayXO[i] == "") {
-        if (oTurn) {
-          displayXO[i] = 'o';
-          filledSpaces += 1;
-        } else if (!oTurn) {
-          displayXO[i] = 'x';
-          filledSpaces += 1;
-        }
+      int bestScore = -1000;
+      int? bestMove;
 
-        int score = _minMax(displayXO, 0, false);
+      for (int i = 0; i < 9; i++) {
+        if (displayXO[i] == "") {
+          if (oTurn.value) {
+            displayXO[i] = 'o';
+            filledSpaces += 1;
+          } else if (!oTurn.value) {
+            displayXO[i] = 'x';
+            filledSpaces += 1;
+          }
 
-        displayXO[i] = '';
-        filledSpaces -= 1;
+          int score = _minMax(displayXO, 0, false);
 
-        if (score > bestScore) {
-          bestScore = score;
-          bestMove = i;
+          displayXO[i] = '';
+          filledSpaces -= 1;
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = i;
+          }
         }
       }
-    }
 
-    if(bestMove != null) {
-      if(oTurn) {
+      if(bestMove != null) {
+        if(oTurn.value) {
 
           displayXO[bestMove] = 'o';
           filledSpaces += 1;
 
-      } else if(!oTurn) {
+        } else if(!oTurn.value) {
 
           displayXO[bestMove] = 'x';
           filledSpaces += 1;
 
+        }
       }
-    }
 
 
-    oTurn = !oTurn;
-    _checkWinner();
+      oTurn.value = !oTurn.value;
+      _checkWinner();
+
+    });
   }
 }

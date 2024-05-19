@@ -14,23 +14,62 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(GameController(game: game));
 
-    return Scaffold(
-      backgroundColor: Colors.grey[900],
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        child: Column(
+    String turnText;
+    int rotations;
+    if(game == '2p') {
+      turnText = 'Your Turn';
+      rotations = 2;
+    } else {
+      turnText = 'Ai Turn';
+      rotations = 0;
+    }
+
+
+
+    return Obx(
+      () => Scaffold(
+        backgroundColor: Colors.grey[900],
+        body: Stack(
           children: [
-            /// Score
-            const MyScoreBoard(),
+            /// First Player Turn
+            if(controller.oTurn.value)
+              Positioned(
+                top: -5,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 4,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(500), bottomRight: Radius.circular(500)),
+                    color: Colors.blue,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  child: Center(
+                    child:RotatedBox(
+                        quarterTurns: rotations,
+                        child: Text(turnText, style: MyFonts.myFontWhite)),
+                  ),
+                ),
+              ),
 
             /// Board
            const MyBoard(),
 
-            /// Title
-            Expanded(
+            /// Second Player Turn
+            if(!controller.oTurn.value)
+              Positioned(
+              bottom: -5,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 4,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(500), topRight: Radius.circular(500)),
+                  color: Colors.red,
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                 child: Center(
-                  child: Text('Tic-Tac-Toe', style: MyFonts.myFontWhite),
-                )
+                  child: Text('Your Turn', style: MyFonts.myFontWhite),
+                ),
+              ),
             ),
           ],
         ),
