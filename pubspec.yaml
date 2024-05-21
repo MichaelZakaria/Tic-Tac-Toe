@@ -39,6 +39,8 @@ dependencies:
   google_fonts: ^5.1.0
   avatar_glow: ^3.0.1
   animate_do: ^3.3.4
+  audioplayers: ^5.2.1
+  flutter_native_splash: ^2.3.8
 
 dev_dependencies:
   flutter_test:

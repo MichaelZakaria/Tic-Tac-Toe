@@ -1,8 +1,8 @@
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tic_tac_toe/common/fonts/my_fonts.dart';
-import 'package:tic_tac_toe/common/score_board/my_score_board.dart';
+import '../common/dialogs/my_alert_dialog.dart';
 
 class GameController extends GetxController {
   static GameController get instance => Get.find();
@@ -32,23 +32,28 @@ class GameController extends GetxController {
   /// Methods
   void onTap(int index) {
     if(oTurn.value && displayXO[index] == "") {
+        AudioPlayer().play(AssetSource('tap_spound.aiff'));
 
         displayXO[index] = 'o';
         filledSpaces += 1;
 
         newAiTurn = true;
 
+        oTurn.value = !oTurn.value;
+        _checkWinner();
+
     } else if(!oTurn.value && displayXO[index] == "") {
+      AudioPlayer().play(AssetSource('tap_spound.aiff'));
 
         displayXO[index] = 'x';
         filledSpaces += 1;
 
         newAiTurn = true;
 
-    }
+        oTurn.value = !oTurn.value;
+        _checkWinner();
 
-    oTurn.value = !oTurn.value;
-    _checkWinner();
+    }
   }
 
   void _checkWinner() {
@@ -118,11 +123,11 @@ class GameController extends GetxController {
 
     // check for a draw
     else if(filledSpaces == 9) {
-      _showADraw();
+      _showWhoWon('tie');
     }
 
     else {
-      _nextTurn();
+      nextTurn();
     }
 
   }
@@ -180,6 +185,7 @@ class GameController extends GetxController {
   }
 
   void _showWhoWon(String winner) {
+    AudioPlayer().play(AssetSource('winning_sound.wav'));
 
     isTurnVisible.value = false;
     disableTap.value = true;
@@ -197,67 +203,18 @@ class GameController extends GetxController {
               barrierDismissible: false,
               context: Get.context!,
               builder: (BuildContext context) {
-                return AlertDialog(
-                  alignment: Alignment.topCenter,
-                  title: Center(child: Text('Winner: $winner' ,style: MyFonts.myFontBlack.copyWith(overflow: TextOverflow.visible))),
-                  content: MyScoreBoard(winner: winner),
-                  actions: [
-                    FloatingActionButton(
-                        onPressed: () {
-                          _resetBoard();
-                          Navigator.of(context).pop();
-                          _nextTurn();
-                          isTurnVisible.value = true;
-                        },
-                        child: const Text('Again',)
-                    )
-                  ],
-                );
+                return MyAlertDialog(winner: winner);
               }
           );
         }
     );
   }
 
-  void _resetBoard() {
+  void resetBoard() {
 
     displayXO.setAll(0, ["","","","","","","","",""]);
     isAnimatingCell.setAll(0, [false,false,false,false,false,false,false,false,false]);
     filledSpaces = 0;
-  }
-
-  void _showADraw() {
-
-    isTurnVisible.value = false;
-    disableTap.value = true;
-
-    Future.delayed(
-        const Duration(seconds: 1),
-        () {
-          showDialog(
-              barrierDismissible: false,
-              context: Get.context!,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Draw'),
-                  actions: [
-                    FloatingActionButton(
-                        onPressed: () {
-                          _resetBoard();
-                          Navigator.of(context).pop();
-                          _nextTurn();
-                          isTurnVisible.value = true;
-                        },
-                        child: const Text('Again')
-                    )
-                  ],
-                );
-              }
-          );
-        }
-    );
-
-
   }
 
   void _aiTurn() {
@@ -265,6 +222,8 @@ class GameController extends GetxController {
     disableTap.value = true;
 
     Future.delayed(const Duration(seconds: 1), () {
+      AudioPlayer().play(AssetSource('tap_spound.aiff'));
+
       List<int> emptySpaces = [];
       for (int i = 0; i < 9; i++) {
         if(displayXO[i] == "") {
@@ -293,7 +252,7 @@ class GameController extends GetxController {
 
   }
 
-  void _nextTurn() {
+  void nextTurn() {
     if(newAiTurn) {
         newAiTurn = !newAiTurn;
 
@@ -389,6 +348,7 @@ class GameController extends GetxController {
     disableTap.value = true;
 
     Future.delayed(const Duration(seconds: 1), () {
+      AudioPlayer().play(AssetSource('tap_spound.aiff'));
 
       int bestScore = -1000;
       int? bestMove;
@@ -437,3 +397,4 @@ class GameController extends GetxController {
     });
   }
 }
+

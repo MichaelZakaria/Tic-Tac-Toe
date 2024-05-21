@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tic_tac_toe/common/fonts/my_fonts.dart';
@@ -17,6 +18,7 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        AudioPlayer().play(AssetSource('random_button_sound_3.wav'));
         Navigator.push(context, MaterialPageRoute(builder: (context) => GameScreen(game: gameMode)))
         .then((value) => Get.delete<GameController>());
       },

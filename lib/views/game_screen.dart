@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:tic_tac_toe/controllers/game_controller.dart';
 import '../common/board/my_board.dart';
 import '../common/fonts/my_fonts.dart';
-import '../common/score_board/my_score_board.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key, required this.game});
@@ -24,8 +23,6 @@ class GameScreen extends StatelessWidget {
       turnText = 'Ai Turn';
       rotations = 0;
     }
-
-
 
     return Obx(
       () => Scaffold(
