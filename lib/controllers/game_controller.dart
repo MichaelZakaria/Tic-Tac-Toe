@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tic_tac_toe/common/fonts/my_fonts.dart';
+import 'package:tic_tac_toe/common/score_board/my_score_board.dart';
 
 class GameController extends GetxController {
   static GameController get instance => Get.find();
@@ -20,6 +22,12 @@ class GameController extends GetxController {
   int filledSpaces = 0;
 
   bool newAiTurn = false;
+
+  RxBool disableTap = false.obs;
+
+  RxBool isTurnVisible = true.obs;
+
+  RxList<bool> isAnimatingCell = <bool>[false,false,false,false,false,false,false,false,false].obs;
 
   /// Methods
   void onTap(int index) {
@@ -46,41 +54,65 @@ class GameController extends GetxController {
   void _checkWinner() {
     // check first row
     if (displayXO[0] == displayXO[1] && displayXO[0] == displayXO[2] && displayXO[0] != "") {
+      isAnimatingCell[0] = true;
+      isAnimatingCell[1] = true;
+      isAnimatingCell[2] = true;
       _showWhoWon(displayXO[0]);
     }
 
     // check second row
     else if (displayXO[3] == displayXO[4] && displayXO[3] == displayXO[5] && displayXO[3] != "") {
+      isAnimatingCell[3] = true;
+      isAnimatingCell[4] = true;
+      isAnimatingCell[5] = true;
       _showWhoWon(displayXO[3]);
     }
 
     // check third row
     else if (displayXO[6] == displayXO[7] && displayXO[6] == displayXO[8] && displayXO[6] != "") {
+      isAnimatingCell[6] = true;
+      isAnimatingCell[7] = true;
+      isAnimatingCell[8] = true;
       _showWhoWon(displayXO[6]);
     }
 
     // check first column
     else if (displayXO[0] == displayXO[3] && displayXO[0] == displayXO[6] && displayXO[0] != "") {
+      isAnimatingCell[0] = true;
+      isAnimatingCell[3] = true;
+      isAnimatingCell[6] = true;
       _showWhoWon(displayXO[0]);
     }
 
     // check second column
     else if (displayXO[1] == displayXO[4] && displayXO[1] == displayXO[7] && displayXO[1] != "") {
+      isAnimatingCell[1] = true;
+      isAnimatingCell[4] = true;
+      isAnimatingCell[7] = true;
       _showWhoWon(displayXO[1]);
     }
 
     // check third column
     else if (displayXO[2] == displayXO[5] && displayXO[2] == displayXO[8] && displayXO[2] != "") {
+      isAnimatingCell[2] = true;
+      isAnimatingCell[5] = true;
+      isAnimatingCell[8] = true;
       _showWhoWon(displayXO[2]);
     }
 
     // check left to right diagonal
     else if (displayXO[0] == displayXO[4] && displayXO[0] == displayXO[8] && displayXO[0] != "") {
+      isAnimatingCell[0] = true;
+      isAnimatingCell[4] = true;
+      isAnimatingCell[8] = true;
       _showWhoWon(displayXO[0]);
     }
 
     // check right to left diagonal
     else if (displayXO[2] == displayXO[4] && displayXO[2] == displayXO[6] && displayXO[2] != "") {
+      isAnimatingCell[2] = true;
+      isAnimatingCell[4] = true;
+      isAnimatingCell[6] = true;
       _showWhoWon(displayXO[2]);
     }
 
@@ -148,62 +180,89 @@ class GameController extends GetxController {
   }
 
   void _showWhoWon(String winner) {
-    showDialog(
-        barrierDismissible: false,
-        context: Get.context!,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Winner: $winner'),
-            actions: [
-              FloatingActionButton(
-                  onPressed: () {
-                    _resetBoard();
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Again',)
-              )
-            ],
-          );
-        }
-    );
+
+    isTurnVisible.value = false;
+    disableTap.value = true;
 
     if(winner == 'o') {
       oScore += 1;
     } else if(winner == 'x') {
       xScore += 1;
     }
-  }
 
-  void _resetBoard() {
-
-      displayXO.setAll(0, ["","","","","","","","",""]);
-
-
-    filledSpaces = 0;
-  }
-
-  void _showADraw() {
-    showDialog(
-        barrierDismissible: false,
-        context: Get.context!,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Draw'),
-            actions: [
-              FloatingActionButton(
-                  onPressed: () {
-                    _resetBoard();
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Again')
-              )
-            ],
+    Future.delayed(
+        const Duration(seconds: 1),
+        () {
+          showDialog(
+              barrierDismissible: false,
+              context: Get.context!,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  alignment: Alignment.topCenter,
+                  title: Center(child: Text('Winner: $winner' ,style: MyFonts.myFontBlack.copyWith(overflow: TextOverflow.visible))),
+                  content: MyScoreBoard(winner: winner),
+                  actions: [
+                    FloatingActionButton(
+                        onPressed: () {
+                          _resetBoard();
+                          Navigator.of(context).pop();
+                          _nextTurn();
+                          isTurnVisible.value = true;
+                        },
+                        child: const Text('Again',)
+                    )
+                  ],
+                );
+              }
           );
         }
     );
   }
 
+  void _resetBoard() {
+
+    displayXO.setAll(0, ["","","","","","","","",""]);
+    isAnimatingCell.setAll(0, [false,false,false,false,false,false,false,false,false]);
+    filledSpaces = 0;
+  }
+
+  void _showADraw() {
+
+    isTurnVisible.value = false;
+    disableTap.value = true;
+
+    Future.delayed(
+        const Duration(seconds: 1),
+        () {
+          showDialog(
+              barrierDismissible: false,
+              context: Get.context!,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Draw'),
+                  actions: [
+                    FloatingActionButton(
+                        onPressed: () {
+                          _resetBoard();
+                          Navigator.of(context).pop();
+                          _nextTurn();
+                          isTurnVisible.value = true;
+                        },
+                        child: const Text('Again')
+                    )
+                  ],
+                );
+              }
+          );
+        }
+    );
+
+
+  }
+
   void _aiTurn() {
+
+    disableTap.value = true;
 
     Future.delayed(const Duration(seconds: 1), () {
       List<int> emptySpaces = [];
@@ -229,21 +288,21 @@ class GameController extends GetxController {
       oTurn.value = !oTurn.value;
       _checkWinner();
 
+      disableTap.value  = false;
     });
 
   }
 
   void _nextTurn() {
     if(newAiTurn) {
-      newAiTurn = !newAiTurn;
-      if(game == 'easy') _aiTurn();
-      if(game == 'hard') {
-        if (filledSpaces <= 1) {
-          _aiTurn();
-        } else {
-          _hardAiTurn();
+        newAiTurn = !newAiTurn;
+
+        if(game == 'easy') {_aiTurn();}
+        else if(game == 'hard') {
+          if (filledSpaces <= 1) {_aiTurn();}
+          else {_hardAiTurn();}
         }
-      }
+        else {disableTap.value = false;}
 
     }
   }
@@ -327,6 +386,8 @@ class GameController extends GetxController {
 
   void _hardAiTurn() {
 
+    disableTap.value = true;
+
     Future.delayed(const Duration(seconds: 1), () {
 
       int bestScore = -1000;
@@ -372,6 +433,7 @@ class GameController extends GetxController {
       oTurn.value = !oTurn.value;
       _checkWinner();
 
+      disableTap.value = false;
     });
   }
 }

@@ -38,6 +38,7 @@ dependencies:
   get: ^4.6.6
   google_fonts: ^5.1.0
   avatar_glow: ^3.0.1
+  animate_do: ^3.3.4
 
 dev_dependencies:
   flutter_test:
