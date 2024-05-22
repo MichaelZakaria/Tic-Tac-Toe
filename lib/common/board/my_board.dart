@@ -48,7 +48,14 @@ class MyBoard extends StatelessWidget {
                             child: Obx(() => Pulse(
                                 infinite: controller.isAnimatingCell[index],
                                 animate: controller.isAnimatingCell[index],
-                                child: Text(controller.displayXO[index], style: const TextStyle(color: Colors.white, fontSize: 35))
+                                child: Text(
+                                    controller.displayXO[index],
+                                    style: TextStyle(
+                                        color: controller.displayXO[index] == 'x' ? Colors.red[600] : Colors.blue[600],
+                                        fontSize: 42,
+                                        fontWeight: FontWeight.bold
+                                    )
+                                )
                             )),
                           ),
                         ),
