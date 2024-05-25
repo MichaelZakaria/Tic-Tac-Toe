@@ -61,6 +61,8 @@ class MyAlertDialog extends StatelessWidget {
                       AudioPlayer().play(AssetSource('home_button_sound_2.wav'));
                       controller.resetBoard();
                       Navigator.of(context).pop();
+                      controller.isEndGame.value = false;
+                      controller.disableTap.value = false;
                       controller.nextTurn();
                       controller.isTurnVisible.value = true;
                     },

@@ -29,6 +29,8 @@ class GameController extends GetxController {
 
   RxList<bool> isAnimatingCell = <bool>[false,false,false,false,false,false,false,false,false].obs;
 
+  RxBool isEndGame = false.obs;
+
   /// Methods
   void onTap(int index) {
     if(oTurn.value && displayXO[index] == "") {
@@ -187,6 +189,7 @@ class GameController extends GetxController {
   void _showWhoWon(String winner) {
     AudioPlayer().play(AssetSource('winning_sound.wav'));
 
+    isEndGame.value = true;
     isTurnVisible.value = false;
     disableTap.value = true;
 
@@ -247,7 +250,9 @@ class GameController extends GetxController {
       oTurn.value = !oTurn.value;
       _checkWinner();
 
-      disableTap.value  = false;
+      if (!isEndGame.value) {
+        disableTap.value  = false;
+      }
     });
 
   }
@@ -393,7 +398,9 @@ class GameController extends GetxController {
       oTurn.value = !oTurn.value;
       _checkWinner();
 
-      disableTap.value = false;
+      if (!isEndGame.value) {
+        disableTap.value = false;
+      }
     });
   }
 }
