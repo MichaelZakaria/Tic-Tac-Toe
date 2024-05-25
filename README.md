@@ -2,7 +2,9 @@
 
 - Splash Screen :<br>
 <p align="center">
-  <img src="https://github.com/MichaelZakaria/tic_tac_toe/assets/65913937/f9fa6375-4887-4150-99d3-7d3c8e21f3c0" width="400" height="800" border: 5px solid #555/>
+  <kbd>
+    <img src="https://github.com/MichaelZakaria/tic_tac_toe/assets/65913937/f9fa6375-4887-4150-99d3-7d3c8e21f3c0" width="400" height="800"/>
+  </kbd>
 </p>
 
 <br>
